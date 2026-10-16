@@ -28,7 +28,7 @@ As of 2026-10-16:
   a new directory. SQLite integrity, UUID subject and CA public/private material
   matched. Off-site transfer and production recovery drill remain pending.
 - Flightwatch regression and new isolation/quota/migration tests passed locally
-  (109 tests before the final additional migration-lock tests).
+  (111 tests).
   Production data has NOT been migrated by this record.
 
 Pending: production identity hostname and ICP access check, invitation/passkey/
@@ -44,3 +44,6 @@ Primary references:
 
 - https://nginx.org/en/security_advisories.html
 - https://github.com/smallstep/certificates/blob/v0.30.2/logging/clf.go
+
+- Patched step-ca 0.30.2 with x/crypto 0.58.0 and x/net 0.61.0 using
+  isolated Go 1.27.2; provisioner, API and logging tests passed. See SECURITY.md.

@@ -16,15 +16,15 @@ services:
     ports: ["127.0.0.1:18000:8000"]
     networks: [identity]
   step-ca:
-    image: smallstep/step-ca:0.30.2@sha256:a2b17872915c193259b75a5474c398326f41bd199f0842093e52cf4182bc8270
+    image: personal-access-step-ca:0.30.2-personal.1
+    build:
+      context: ./build/step-ca
+    pull_policy: never
     restart: unless-stopped
     command: ["step-ca", "/home/step/config/ca.json", "--password-file", "/home/step/secrets/password"]
     volumes: ["./runtime/step:/home/step"]
     tmpfs: [/tmp]
     cap_drop: [ALL]
-    # The upstream binary carries this file capability; Linux refuses exec
-    # when it is absent from the bounding set, even though we use port 9000.
-    cap_add: [NET_BIND_SERVICE]
     security_opt: [no-new-privileges:true]
     mem_limit: 256m
     cpus: 0.4

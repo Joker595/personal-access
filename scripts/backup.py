@@ -14,7 +14,7 @@ def backup(project,destination,recipient):
     if not (project/'runtime').is_dir():raise ValueError('Missing runtime')
     destination.mkdir(mode=0o700,parents=True,exist_ok=True)
     if not recipient.startswith('age1'):raise ValueError('Use an age public recipient')
-    status=subprocess.check_output(['docker','compose','--profile','ssh','ps','--services','--status','running'],cwd=project,text=True).split()
+    status=subprocess.check_output(['docker','compose','--profile','ssh','ps','--services','--status','running'],cwd=project,universal_newlines=True).split()
     services=[s for s in status if s in ('casdoor','step-ca')]
     if not services:raise RuntimeError('No running identity service; check maintenance state')
     stamp=datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
