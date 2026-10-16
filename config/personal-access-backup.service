@@ -1,0 +1,13 @@
+[Unit]
+Description=Consistent encrypted personal identity backup
+Requires=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+User=root
+UMask=0077
+WorkingDirectory=/opt/personal-access/app
+EnvironmentFile=/etc/personal-access/backup.env
+ExecStart=/usr/bin/python3 scripts/backup.py --project /opt/personal-access/app --destination /opt/personal-access/backups --recipient ${BACKUP_RECIPIENT} --remote ${BACKUP_REMOTE}
+TimeoutStartSec=30min

@@ -1,0 +1,32 @@
+# The external TLS edge and this service share only personal-access-edge.
+# Replace EDGE_CONTAINER with that edge's Docker DNS name (trusted proxy).
+log_format identity_safe '$remote_addr $request_method $uri $status';
+map $uri $login_key {
+  default '';
+  ~^/api/(login|signup|verify|device-auth|webauthn) $binary_remote_addr;
+}
+map $uri $code_key {
+  default '';
+  /api/send-verification-code $binary_remote_addr;
+}
+limit_req_zone $login_key zone=login:10m rate=5r/s;
+limit_req_zone $code_key zone=codes:1m rate=1r/m;
+server {
+  listen 8080;
+  server_name _;
+  set_real_ip_from EDGE_CONTAINER;
+  real_ip_header X-Forwarded-For;
+  access_log /dev/stdout identity_safe;
+  client_max_body_size 10m;
+  location / {
+    limit_req zone=login burst=20 nodelay;
+    limit_req zone=codes burst=2 nodelay;
+    limit_req_status 429;
+    proxy_pass http://casdoor:8000;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_hide_header X-Powered-By;
+  }
+}

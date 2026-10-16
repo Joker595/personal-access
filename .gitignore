@@ -1,0 +1,10 @@
+.env
+runtime/
+secrets/
+backups/
+*.sqlite*
+*.db
+*.key
+__pycache__/
+.pytest_cache/
+.DS_Store
